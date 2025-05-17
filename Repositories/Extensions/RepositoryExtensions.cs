@@ -22,7 +22,6 @@ namespace App.Repositories.Extensions
             //scoped yaşım döngüsü : request ile başar response ile sonlanır(EF core için)
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;

@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
+using System.Text.Json.Serialization;
 
 namespace App.Services
 {
+    //Servis katmanında yapılan işlemin sonucunu (başarılı mı, başarısız mı, hata mesajı ne, HTTP durumu ne, veri dönecek mi?)
+    //tek bir yapı içinde ifade etmeyi sağlar.
+
+
+    //Veri dönen işlemler için
     public class ServiceResult<T>
     {
         public T? Data { get; set;  }
         public List<string>? ErrorMessage { get; set; }
-        public bool IsSuccess() => ErrorMessage == null || ErrorMessage.Count == 0;
-        public bool IsFail => !IsSuccess();
+        [JsonIgnore] public bool IsSuccess => ErrorMessage == null || ErrorMessage.Count == 0;
+        [JsonIgnore] public bool IsFail => !IsSuccess;
 
         //static factory method
-
-        public HttpStatusCode Status { get; set; }
+        [JsonIgnore] public HttpStatusCode Status { get; set; }
         public static ServiceResult<T> Success(T data, HttpStatusCode status = HttpStatusCode.OK)
         {
             return new ServiceResult<T>()
@@ -43,16 +43,19 @@ namespace App.Services
         }
     }
 
+
+    //Veri dönmeyen işlemler için (örneğin Update, Delete)
     public class ServiceResult
     {
-        public T? Data { get; set; }
         public List<string>? ErrorMessage { get; set; }
-        public bool IsSuccess() => ErrorMessage == null || ErrorMessage.Count == 0;
-        public bool IsFail => !IsSuccess();
+
+        [JsonIgnore] public bool IsSuccess => ErrorMessage == null || ErrorMessage.Count == 0;
+
+        [JsonIgnore] public bool IsFail => !IsSuccess;
 
         //static factory method
 
-        public HttpStatusCode Status { get; set; }
+        [JsonIgnore] public HttpStatusCode Status { get; set; }
         public static ServiceResult Success(HttpStatusCode status = HttpStatusCode.OK)
         {
             return new ServiceResult()
