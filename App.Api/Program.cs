@@ -1,13 +1,23 @@
-using App.Repositories;
 using App.Repositories.Extensions;
+using App.Services;
 using App.Services.Extensions;
-using Microsoft.EntityFrameworkCore;
+using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<FluentValidationFilter>();
+    // FluentValidation kullanýrken, null referans hatalarýný önlemek için bu ayarý yapýyoruz.
+    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+});
+
+// Bu satýr, API'nin model doðrulama hatalarýný otomatik olarak ele almasýný devre dýþý býrakýr.
+builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
